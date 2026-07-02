@@ -1,0 +1,51 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
+
+android {
+    namespace = appConfig.appNamespace
+    compileSdk appConfig.compileSdk
+
+    defaultConfig {
+        applicationId appConfig.appNamespace
+        minSdk appConfig.minSdk
+        targetSdk appConfig.targetSdk
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = appConfig.jvmTarget
+        freeCompilerArgs.addAll(["-Xskip-metadata-version-check"])
+    }
+}
+
+dependencies {
+    def usePublishedUtil = providers.gradleProperty("usePublishedUtil")
+            .map { it.toBoolean() }
+            .getOrElse(false)
+
+    if (usePublishedUtil) {
+        implementation libs.android.core.utils
+    } else {
+        implementation project(":core_util")
+    }
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+}
