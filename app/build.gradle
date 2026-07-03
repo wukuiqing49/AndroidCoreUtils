@@ -39,7 +39,6 @@ dependencies {
     def usePublishedUtil = providers.gradleProperty("usePublishedUtil")
             .map { it.toBoolean() }
             .getOrElse(false)
-
     if (usePublishedUtil) {
         implementation libs.android.core.utils
     } else {

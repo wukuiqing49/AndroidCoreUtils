@@ -1,4 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidCoreUtils</string>
+
+    <string name="demo_title">AndroidCoreUtils Demo</string>
+    <string name="demo_subtitle">Feature demos with live results and snippets.</string>
+    <string name="demo_home_description">Choose a utility demo.</string>
+    <string name="badge_home">HOME</string>
+    <string name="badge_log">LOG</string>
+    <string name="badge_image">IMG</string>
+    <string name="badge_picker">PICK</string>
+    <string name="badge_share">SHARE</string>
+    <string name="badge_sp">SP</string>
+    <string name="section_log_title">ALog logging</string>
+    <string name="section_image_title">ImageLoaderUtil image loading</string>
+    <string name="section_picker_title">PhotoPickerHelper picker</string>
+    <string name="section_share_title">ShareUtil sharing</string>
+    <string name="section_sp_title">SpUtils storage</string>
+    <string name="toc_log">- ALog: console, file, level, exception, tag filter, flush, log files</string>
+    <string name="toc_image">- ImageLoaderUtil: URL, res, GIF, rounded, circle, grayscale, pinned cache, preload, cache clear</string>
+    <string name="toc_picker">- PhotoPickerHelper: single, multiple, image, video, camera, recorder, Uri info, Uri to File</string>
+    <string name="toc_share">- ShareUtil: text, image Uri, local file, multiple files, log file sharing</string>
+    <string name="toc_sp">- SpUtils: save, read, remove, batch keys, clear</string>
+
+    <string name="log_description">Levels, files, filters, flush, and exceptions.</string>
+    <string name="log_action_levels">D/I/W/E/A</string>
+    <string name="log_action_exception">Exception log</string>
+    <string name="log_action_tag_filter">Tag filter</string>
+    <string name="log_action_flush_sync">Flush Sync</string>
+    <string name="log_action_files">Log files</string>
+    <string name="log_action_dir">Directory info</string>
+    <string name="log_output_waiting">Waiting for log actions</string>
+    <string name="log_result_demo_ready">Demo ready. Log file: %1$s</string>
+    <string name="log_result_levels">Wrote D/I/W/E/A logs</string>
+    <string name="log_result_exception">Wrote exception stack trace</string>
+    <string name="log_result_tag_filter">Enabled tag filter, allowed Demo, then disabled</string>
+    <string name="log_result_flush_sync">flushSync() done</string>
+    <string name="log_result_files">Log files: %1$d\n%2$s</string>
+    <string name="log_result_dir">Dir: %1$s\nCurrent: %2$s</string>
+    <string name="code_log"><![CDATA[CoreUtils.init(
+    this,
+    CoreUtilsConfig(
+        initLog = true,
+        debug = BuildConfig.DEBUG,
+        logToFile = true,
+        showLogStackInfo = true,
+        logCaptureCrash = false
+    )
+)
+
+ALog.d("Demo", "debug")
+ALog.e("Demo", "failed", throwable)
+ALog.flushSync()
+val files = ALog.getLogFiles()]]></string>
+
+    <string name="image_description">URL, GIF, circle, rounded, grayscale, cache.</string>
+    <string name="image_action_url">URL normal</string>
+    <string name="image_action_rounded">Rounded</string>
+    <string name="image_action_circle">Circle</string>
+    <string name="image_action_grayscale">Grayscale</string>
+    <string name="image_action_gif">GIF</string>
+    <string name="image_action_res">Resource</string>
+    <string name="image_action_pinned">Pinned cache</string>
+    <string name="image_action_preload">Preload</string>
+    <string name="image_action_clear_cache">Clear cache</string>
+    <string name="image_output_waiting">Waiting for image actions</string>
+    <string name="image_result_preload">preload() requested. The next load should be faster.</string>
+    <string name="image_result_clear_cache">clearAllCache() called</string>
+    <string name="image_result_loading">%1$s loading...</string>
+    <string name="image_result_success">%1$s loaded\n%2$s</string>
+    <string name="image_result_error">%1$s failed: %2$s</string>
+    <string name="image_result_res_success">load(resId) success: android.R.drawable.ic_menu_gallery</string>
+    <string name="image_result_res_error">load(resId) failed: %1$s</string>
+    <string name="image_result_pinned">loadPinned() requested\nPinned disk cache dir:\n%1$s</string>
+    <string name="code_image"><![CDATA[ImageLoaderUtil.load(
+    imageView = imageView,
+    data = urlOrUriOrFileOrRes,
+    radius = 16f,
+    isCircle = false,
+    isGrayscale = false,
+    scale = Scale.FILL
+)
+
+ImageLoaderUtil.loadGif(imageView, gifUrl)
+ImageLoaderUtil.loadPinned(imageView, avatarUrl)
+ImageLoaderUtil.preload(context, url)
+CacheManager.clearAllCache()]]></string>
+
+    <string name="picker_description">Images, videos, camera, recorder, Uri info.</string>
+    <string name="picker_action_single_image">Single image</string>
+    <string name="picker_action_multi_image">Multiple images</string>
+    <string name="picker_action_single_video">Single video</string>
+    <string name="picker_action_mixed">Mixed picker</string>
+    <string name="picker_action_camera">Camera</string>
+    <string name="picker_action_video_camera">Recorder</string>
+    <string name="picker_action_uri_info">Uri info</string>
+    <string name="picker_action_uri_to_file">Uri to File</string>
+    <string name="picker_output_waiting">Waiting for picker result</string>
+    <string name="picker_result_cancelled">No media selected or action cancelled</string>
+    <string name="picker_result_select_first">Select one media item first</string>
+    <string name="picker_result_selected_count">selected count=%1$d</string>
+    <string name="picker_result_uri_info">name=%1$s\nsize=%2$s\nmime=%3$s\nuri=%4$s</string>
+    <string name="picker_result_uri_to_file_failed">uriToFile() failed</string>
+    <string name="picker_result_uri_to_file_success">uriToFile() success\n%1$s\n%2$s</string>
+    <string name="code_picker"><![CDATA[val picker = PhotoPickerHelper.with(activity)
+    .register(maxItems = 9) { uris ->
+        // handle selected media
+    }
+
+picker.launchImage()
+picker.launchImages()
+picker.launchVideo()
+picker.launchCamera()
+picker.launchVideoCamera()
+val file = picker.uriToFile(uri)]]></string>
+
+    <string name="share_description">Text, image, file, multiple file, log file.</string>
+    <string name="share_action_pick_image">Pick image</string>
+    <string name="share_action_text">Share text</string>
+    <string name="share_action_selected_image">Share selected image</string>
+    <string name="share_action_file">Share local file</string>
+    <string name="share_action_multi_file">Share multiple files</string>
+    <string name="share_action_log_file">Share log file</string>
+    <string name="share_output_waiting">Waiting for share actions</string>
+    <string name="share_demo_text">AndroidCoreUtils feature demo</string>
+    <string name="share_title_text">Share demo text</string>
+    <string name="share_title_image">Share image</string>
+    <string name="share_title_file">Share local file</string>
+    <string name="share_title_multi_file">Share multiple files</string>
+    <string name="share_title_log_file">Share log file</string>
+    <string name="share_result_text">shareText result: %1$b</string>
+    <string name="share_result_no_image">No image Uri available to share</string>
+    <string name="share_result_image">shareImage(uri) result: %1$b</string>
+    <string name="share_result_file">shareFile(file) result: %1$b\n%2$s</string>
+    <string name="share_result_multi_file">shareMultipleFiles result: %1$b\ncount=%2$d</string>
+    <string name="share_result_no_log">No current log file</string>
+    <string name="share_result_log_file">share log result: %1$b\n%2$s</string>
+    <string name="share_file_content">AndroidCoreUtils share demo\ncurrentLog=%1$s\n</string>
+    <string name="toast_select_image_first">Select an image first</string>
+    <string name="code_share"><![CDATA[ShareUtil.shareText(context, "text")
+ShareUtil.shareImage(context, imageUri)
+ShareUtil.shareFile(context, file, "text/plain")
+ShareUtil.shareMultipleFiles(context, files, "text/plain")
+
+// File sharing automatically uses a FileProvider Uri.]]></string>
+
+    <string name="sp_description">Save, read, remove, batch keys, clear.</string>
+    <string name="sp_input_hint">Enter text to save</string>
+    <string name="sp_action_save_string">Save String</string>
+    <string name="sp_action_save_types">Save types</string>
+    <string name="sp_action_read">Read</string>
+    <string name="sp_action_all_keys">All keys</string>
+    <string name="sp_action_remove_text">Remove text</string>
+    <string name="sp_action_remove_batch">Batch remove</string>
+    <string name="sp_action_clear">Clear</string>
+    <string name="sp_output_waiting">Waiting for SP actions</string>
+    <string name="sp_result_all_keys">allKeys:\n%1$s</string>
+    <string name="sp_result_values">demo_text=%1$s\ndemo_int=%2$d\ndemo_bool=%3$b\ndemo_set=%4$s\nisEmpty=%5$b</string>
+    <string name="toast_saved_string">String saved</string>
+    <string name="value_empty">&lt;empty&gt;</string>
+    <string name="code_sp"><![CDATA[SpUtils.put("token", token)
+val token = SpUtils.getString("token")
+
+SpUtils.put("count", 1)
+SpUtils.put("enabled", true)
+SpUtils.put("tags", setOf("a", "b"))
+
+val keys = SpUtils.allKeys()
+SpUtils.remove("token")
+SpUtils.removeKeys(arrayOf("count", "enabled"))
+SpUtils.clearAll()]]></string>
 </resources>

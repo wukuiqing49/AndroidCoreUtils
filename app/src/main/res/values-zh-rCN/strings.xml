@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AndroidCoreUtils</string>
+
+    <string name="demo_title">AndroidCoreUtils Demo</string>
+    <string name="demo_subtitle">功能演示、实时结果和代码片段。</string>
+    <string name="demo_home_description">选择一个工具类 Demo。</string>
+    <string name="badge_home">HOME</string>
+    <string name="badge_log">LOG</string>
+    <string name="badge_image">IMG</string>
+    <string name="badge_picker">PICK</string>
+    <string name="badge_share">SHARE</string>
+    <string name="badge_sp">SP</string>
+    <string name="section_log_title">ALog 日志系统</string>
+    <string name="section_image_title">ImageLoaderUtil 图片加载</string>
+    <string name="section_picker_title">PhotoPickerHelper 选择器</string>
+    <string name="section_share_title">ShareUtil 分享</string>
+    <string name="section_sp_title">SpUtils 本地存储</string>
+    <string name="toc_log">- ALog：控制台、文件、级别、异常、Tag 过滤、flush、日志文件列表</string>
+    <string name="toc_image">- ImageLoaderUtil：URL、资源图、GIF、圆角、圆形、灰度、固定缓存、预加载、缓存清理</string>
+    <string name="toc_picker">- PhotoPickerHelper：单选、多选、图片、视频、拍照、录像、Uri 信息、Uri 转 File</string>
+    <string name="toc_share">- ShareUtil：文本、Uri 图片、本地文件、多文件、日志文件分享</string>
+    <string name="toc_sp">- SpUtils：保存、读取、删除、批量 key、清空</string>
+
+    <string name="log_description">级别、文件、过滤、flush、异常。</string>
+    <string name="log_action_levels">D/I/W/E/A</string>
+    <string name="log_action_exception">异常日志</string>
+    <string name="log_action_tag_filter">Tag 过滤</string>
+    <string name="log_action_flush_sync">Flush Sync</string>
+    <string name="log_action_files">日志文件</string>
+    <string name="log_action_dir">目录信息</string>
+    <string name="log_output_waiting">等待日志操作</string>
+    <string name="log_result_demo_ready">Demo 已就绪。日志文件：%1$s</string>
+    <string name="log_result_levels">已写入 D/I/W/E/A 日志</string>
+    <string name="log_result_exception">已写入异常堆栈</string>
+    <string name="log_result_tag_filter">已启用 Tag 过滤，仅放行 Demo，然后关闭过滤</string>
+    <string name="log_result_flush_sync">flushSync() 已完成</string>
+    <string name="log_result_files">日志文件：%1$d\n%2$s</string>
+    <string name="log_result_dir">目录：%1$s\n当前文件：%2$s</string>
+    <string name="code_log"><![CDATA[CoreUtils.init(
+    this,
+    CoreUtilsConfig(
+        initLog = true,
+        debug = BuildConfig.DEBUG,
+        logToFile = true,
+        showLogStackInfo = true,
+        logCaptureCrash = false
+    )
+)
+
+ALog.d("Demo", "debug")
+ALog.e("Demo", "failed", throwable)
+ALog.flushSync()
+val files = ALog.getLogFiles()]]></string>
+
+    <string name="image_description">URL、GIF、圆形、圆角、灰度、缓存。</string>
+    <string name="image_action_url">URL 普通</string>
+    <string name="image_action_rounded">圆角</string>
+    <string name="image_action_circle">圆形</string>
+    <string name="image_action_grayscale">灰度</string>
+    <string name="image_action_gif">GIF</string>
+    <string name="image_action_res">资源图</string>
+    <string name="image_action_pinned">固定缓存</string>
+    <string name="image_action_preload">预加载</string>
+    <string name="image_action_clear_cache">清缓存</string>
+    <string name="image_output_waiting">等待图片操作</string>
+    <string name="image_result_preload">preload() 已发起，下一次加载会更快</string>
+    <string name="image_result_clear_cache">clearAllCache() 已调用</string>
+    <string name="image_result_loading">%1$s 加载中...</string>
+    <string name="image_result_success">%1$s 加载成功\n%2$s</string>
+    <string name="image_result_error">%1$s 加载失败：%2$s</string>
+    <string name="image_result_res_success">load(resId) 加载成功：android.R.drawable.ic_menu_gallery</string>
+    <string name="image_result_res_error">load(resId) 加载失败：%1$s</string>
+    <string name="image_result_pinned">loadPinned() 已调用\n固定磁盘缓存目录：\n%1$s</string>
+    <string name="code_image"><![CDATA[ImageLoaderUtil.load(
+    imageView = imageView,
+    data = urlOrUriOrFileOrRes,
+    radius = 16f,
+    isCircle = false,
+    isGrayscale = false,
+    scale = Scale.FILL
+)
+
+ImageLoaderUtil.loadGif(imageView, gifUrl)
+ImageLoaderUtil.loadPinned(imageView, avatarUrl)
+ImageLoaderUtil.preload(context, url)
+CacheManager.clearAllCache()]]></string>
+
+    <string name="picker_description">图片、视频、拍照、录像、Uri 信息。</string>
+    <string name="picker_action_single_image">单选图片</string>
+    <string name="picker_action_multi_image">多选图片</string>
+    <string name="picker_action_single_video">单选视频</string>
+    <string name="picker_action_mixed">混合选择</string>
+    <string name="picker_action_camera">拍照</string>
+    <string name="picker_action_video_camera">录像</string>
+    <string name="picker_action_uri_info">Uri 信息</string>
+    <string name="picker_action_uri_to_file">Uri 转 File</string>
+    <string name="picker_output_waiting">等待选择结果</string>
+    <string name="picker_result_cancelled">未选择或已取消</string>
+    <string name="picker_result_select_first">请先选择一个媒体</string>
+    <string name="picker_result_selected_count">已选择数量=%1$d</string>
+    <string name="picker_result_uri_info">名称=%1$s\n大小=%2$s\nMIME=%3$s\nUri=%4$s</string>
+    <string name="picker_result_uri_to_file_failed">uriToFile() 失败</string>
+    <string name="picker_result_uri_to_file_success">uriToFile() 成功\n%1$s\n%2$s</string>
+    <string name="code_picker"><![CDATA[val picker = PhotoPickerHelper.with(activity)
+    .register(maxItems = 9) { uris ->
+        // 处理已选择的媒体
+    }
+
+picker.launchImage()
+picker.launchImages()
+picker.launchVideo()
+picker.launchCamera()
+picker.launchVideoCamera()
+val file = picker.uriToFile(uri)]]></string>
+
+    <string name="share_description">文本、图片、文件、多文件、日志文件。</string>
+    <string name="share_action_pick_image">选择图片</string>
+    <string name="share_action_text">分享文本</string>
+    <string name="share_action_selected_image">分享选中图片</string>
+    <string name="share_action_file">分享本地文件</string>
+    <string name="share_action_multi_file">分享多文件</string>
+    <string name="share_action_log_file">分享日志文件</string>
+    <string name="share_output_waiting">等待分享操作</string>
+    <string name="share_demo_text">AndroidCoreUtils 功能演示</string>
+    <string name="share_title_text">分享 Demo 文本</string>
+    <string name="share_title_image">分享图片</string>
+    <string name="share_title_file">分享本地文件</string>
+    <string name="share_title_multi_file">分享多文件</string>
+    <string name="share_title_log_file">分享日志文件</string>
+    <string name="share_result_text">shareText 结果：%1$b</string>
+    <string name="share_result_no_image">没有可分享的图片 Uri</string>
+    <string name="share_result_image">shareImage(uri) 结果：%1$b</string>
+    <string name="share_result_file">shareFile(file) 结果：%1$b\n%2$s</string>
+    <string name="share_result_multi_file">shareMultipleFiles 结果：%1$b\n数量=%2$d</string>
+    <string name="share_result_no_log">当前没有日志文件</string>
+    <string name="share_result_log_file">分享日志结果：%1$b\n%2$s</string>
+    <string name="share_file_content">AndroidCoreUtils 分享演示\ncurrentLog=%1$s\n</string>
+    <string name="toast_select_image_first">请先选择图片</string>
+    <string name="code_share"><![CDATA[ShareUtil.shareText(context, "text")
+ShareUtil.shareImage(context, imageUri)
+ShareUtil.shareFile(context, file, "text/plain")
+ShareUtil.shareMultipleFiles(context, files, "text/plain")
+
+// File 形式分享会自动使用 FileProvider Uri]]></string>
+
+    <string name="sp_description">保存、读取、删除、批量 key、清空。</string>
+    <string name="sp_input_hint">输入要保存的内容</string>
+    <string name="sp_action_save_string">保存 String</string>
+    <string name="sp_action_save_types">保存多类型</string>
+    <string name="sp_action_read">读取</string>
+    <string name="sp_action_all_keys">所有 Key</string>
+    <string name="sp_action_remove_text">删除文本</string>
+    <string name="sp_action_remove_batch">批量删除</string>
+    <string name="sp_action_clear">清空</string>
+    <string name="sp_output_waiting">等待 SP 操作</string>
+    <string name="sp_result_all_keys">allKeys:\n%1$s</string>
+    <string name="sp_result_values">demo_text=%1$s\ndemo_int=%2$d\ndemo_bool=%3$b\ndemo_set=%4$s\nisEmpty=%5$b</string>
+    <string name="toast_saved_string">已保存 String</string>
+    <string name="value_empty">&lt;empty&gt;</string>
+    <string name="code_sp"><![CDATA[SpUtils.put("token", token)
+val token = SpUtils.getString("token")
+
+SpUtils.put("count", 1)
+SpUtils.put("enabled", true)
+SpUtils.put("tags", setOf("a", "b"))
+
+val keys = SpUtils.allKeys()
+SpUtils.remove("token")
+SpUtils.removeKeys(arrayOf("count", "enabled"))
+SpUtils.clearAll()]]></string>
+</resources>

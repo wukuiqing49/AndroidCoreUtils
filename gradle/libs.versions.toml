@@ -11,7 +11,7 @@ mmkv = "2.2.3"
 coil = "3.3.0"
 luban = "2.0.1"
 junit = "4.13.2"
-androidCoreUtils = "v0.0.2"
+androidCoreUtils = "v0.0.4"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
