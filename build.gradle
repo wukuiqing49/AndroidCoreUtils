@@ -38,18 +38,18 @@ tasks.register("publishUtilToGitHubPackages") {
 
 tasks.register("verifyUtilPublishedSample", Exec) {
     group = "verification"
-    description = "Builds the sample app against published AndroidCoreUtils artifacts."
+    description = "Builds debug and R8-minified sample variants against published AndroidCoreUtils artifacts."
     workingDir = rootDir
     if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-        commandLine("cmd", "/c", "gradlew.bat", "--no-daemon", "--max-workers=1", "--no-configuration-cache", ":app:assembleDebug", "-PusePublishedUtil=true")
+        commandLine("cmd", "/c", "gradlew.bat", "--no-daemon", "--max-workers=1", "--no-configuration-cache", ":app:assembleDebug", ":app:assembleVerifyRelease", "-PusePublishedUtil=true")
     } else {
-        commandLine("./gradlew", "--no-daemon", "--max-workers=1", "--no-configuration-cache", ":app:assembleDebug", "-PusePublishedUtil=true")
+        commandLine("./gradlew", "--no-daemon", "--max-workers=1", "--no-configuration-cache", ":app:assembleDebug", ":app:assembleVerifyRelease", "-PusePublishedUtil=true")
     }
 }
 
 tasks.register("verifyUtilMavenLocalSample", Exec) {
     group = "verification"
-    description = "Publishes AndroidCoreUtils to Maven Local and builds the sample with the published dependency."
+    description = "Publishes AndroidCoreUtils to Maven Local and builds debug and R8-minified sample variants."
     workingDir = rootDir
     def versionFile = layout.projectDirectory.file("version.properties").asFile
     def versionName = "0.0.1"
@@ -69,6 +69,7 @@ tasks.register("verifyUtilMavenLocalSample", Exec) {
                 "--no-configuration-cache",
                 "publishUtilToMavenLocal",
                 ":app:assembleDebug",
+                ":app:assembleVerifyRelease",
                 "-PusePublishedUtil=true",
                 "-PuseMavenLocalUtil=true",
                 "-PPOM_GROUP_ID=com.github.wukuiqing49",
@@ -83,6 +84,7 @@ tasks.register("verifyUtilMavenLocalSample", Exec) {
                 "--no-configuration-cache",
                 "publishUtilToMavenLocal",
                 ":app:assembleDebug",
+                ":app:assembleVerifyRelease",
                 "-PusePublishedUtil=true",
                 "-PuseMavenLocalUtil=true",
                 "-PPOM_GROUP_ID=com.github.wukuiqing49",

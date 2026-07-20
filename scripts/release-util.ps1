@@ -117,7 +117,7 @@ Replace-InFile $versionsTomlFile {
 }
 
 Run ".\gradlew.bat --no-daemon --max-workers=1 --no-configuration-cache :app:assembleDebug :core_util:assembleRelease `"-PPOM_GROUP_ID=$groupId`" `"-PPOM_ARTIFACT_ID=$artifactId`" `"-PPOM_VERSION=$tag`" `"-PGITHUB_REPOSITORY=$githubRepository`""
-Run ".\gradlew.bat --no-daemon --max-workers=1 --no-configuration-cache publishUtilToMavenLocal :app:assembleDebug `"-PusePublishedUtil=true`" `"-PuseMavenLocalUtil=true`" `"-PPOM_GROUP_ID=$groupId`" `"-PPOM_ARTIFACT_ID=$artifactId`" `"-PPOM_VERSION=$tag`" `"-PGITHUB_REPOSITORY=$githubRepository`""
+Run ".\gradlew.bat --no-daemon --max-workers=1 --no-configuration-cache publishUtilToMavenLocal :app:assembleDebug :app:assembleVerifyRelease `"-PusePublishedUtil=true`" `"-PuseMavenLocalUtil=true`" `"-PPOM_GROUP_ID=$groupId`" `"-PPOM_ARTIFACT_ID=$artifactId`" `"-PPOM_VERSION=$tag`" `"-PGITHUB_REPOSITORY=$githubRepository`""
 
 $statusAfter = git status --porcelain
 if (-not $statusAfter) {

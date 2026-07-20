@@ -304,6 +304,9 @@ implementation "com.github.wukuiqing49:AndroidCoreUtils:v0.0.2"
 .\gradlew.bat verifyUtilPublishLocal
 ```
 
+该任务会同时构建普通 Debug 和开启 R8 的 `verifyRelease` 验证包，确保发布产物的
+consumer ProGuard 规则可被外部应用正常使用。
+
 发布到 GitHub Packages：
 
 ```powershell

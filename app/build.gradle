@@ -20,6 +20,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
+
+        // 仅用于验证已发布 AAR 在宿主开启 R8 后的 consumer ProGuard 兼容性。
+        verifyRelease {
+            initWith release
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ["release"]
+        }
     }
 
     compileOptions {
