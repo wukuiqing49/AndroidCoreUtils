@@ -19,7 +19,7 @@ import java.io.File
 import java.security.MessageDigest
 
 /**
- * CacheManager
+ * Coil 图片加载器与持久图片缓存管理工具。
  *
  * 功能：
  * 1. 管理 Coil 的 ImageLoader 缓存（内存/磁盘）
@@ -40,18 +40,24 @@ object CacheManager {
     // Coil ImageLoader 实例
     private var imageLoader: ImageLoader? = null
 
+    @Volatile
     private var isInitialized = false
     private var pinnedDiskDir: File? = null
     private var coilDiskDir: File? = null
 
     /**
-     * 初始化缓存
-     * @param context Context
-     * @param pinnedMemoryMB 永久内存缓存大小 (MB)
-     * @param memoryCachePercent Coil 内存缓存占比
-     * @param pinnedDiskMB 永久磁盘缓存大小 (MB)
-     * @param diskCacheMB Coil 磁盘缓存大小 (MB)
+     * 初始化 Coil 加载器及内存、磁盘缓存。
+     *
+     * 必须在使用本对象或 [ImageLoaderUtil] 前调用一次。开启 [registerSingleton] 会将
+     * 此加载器注册为宿主应用的 Coil 全局单例，应仅在应用未自行配置该单例时使用。
+     *
+     * @param context 应用或页面 Context，内部会持有其 Application Context。
+     * @param pinnedMemoryMB 持久图片内存缓存大小，单位 MB。
+     * @param memoryCachePercent Coil 内存缓存占可用内存的比例，取值范围为 `(0, 1]`。
+     * @param pinnedDiskMB 持久图片磁盘缓存大小，单位 MB。
+     * @param diskCacheMB Coil 磁盘缓存大小，单位 MB。
      */
+    @Synchronized
     fun init(
         context: Context,
         pinnedMemoryMB: Int = 20,
@@ -61,6 +67,7 @@ object CacheManager {
         registerSingleton: Boolean = false
     ) {
         if (isInitialized) return
+        validateConfiguration(pinnedMemoryMB, memoryCachePercent, pinnedDiskMB, diskCacheMB)
 
         val appContext = context.applicationContext
         // -------------------------------
@@ -105,16 +112,30 @@ object CacheManager {
         isInitialized = true
     }
 
-    /** 获取 Coil ImageLoader */
+    internal fun validateConfiguration(
+        pinnedMemoryMB: Int,
+        memoryCachePercent: Double,
+        pinnedDiskMB: Int,
+        diskCacheMB: Int
+    ) {
+        require(pinnedMemoryMB > 0) { "pinnedMemoryMB must be greater than 0." }
+        require(memoryCachePercent > 0.0 && memoryCachePercent <= 1.0) {
+            "memoryCachePercent must be in the range (0.0, 1.0]."
+        }
+        require(pinnedDiskMB > 0) { "pinnedDiskMB must be greater than 0." }
+        require(diskCacheMB > 0) { "diskCacheMB must be greater than 0." }
+    }
+
+    /** 获取已初始化的 Coil [ImageLoader]；未初始化时抛出异常。 */
     fun getImageLoader(): ImageLoader = imageLoader ?: throw IllegalStateException("CacheManager not initialized. Call init(context) first.")
 
     /** 是否已经初始化。 */
     fun isInitialized(): Boolean = isInitialized
 
-    /** 永久磁盘缓存目录。 */
+    /** 获取持久图片磁盘缓存目录；未初始化时返回 `null`。 */
     fun getPinnedDiskDir(): File? = pinnedDiskDir
 
-    /** Coil 磁盘缓存目录。 */
+    /** 获取 Coil 磁盘缓存目录；未初始化时返回 `null`。 */
     fun getCoilDiskDir(): File? = coilDiskDir
 
     // ===============================

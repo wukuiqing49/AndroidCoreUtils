@@ -8,20 +8,15 @@ import com.wkq.util.jump.impl.*
  */
 object SmartJumpEngine {
 
-    private val handlers = mutableListOf<JumpHandler>()
-
-    init {
-        // 注册所有处理器
-        handlers.add(EmbeddedSchemeHandler()) // 优先级最高
-        handlers.add(TaobaoJumpHandler())
-        handlers.add(JDJumpHandler())
-        handlers.add(PDDJumpHandler())
-        handlers.add(DouyinJumpHandler())
-        handlers.add(IdlefishJumpHandler())
-        
-        // 按优先级从高到低排序
-        handlers.sortByDescending { it.getPriority() }
-    }
+    @Volatile
+    private var handlers: List<JumpHandler> = listOf(
+        EmbeddedSchemeHandler(),
+        TaobaoJumpHandler(),
+        JDJumpHandler(),
+        PDDJumpHandler(),
+        DouyinJumpHandler(),
+        IdlefishJumpHandler()
+    ).sortedByDescending { it.getPriority() }
 
     /**
      * 根据 URL 获取对应的跳转 Scheme
@@ -39,14 +34,15 @@ object SmartJumpEngine {
     /**
      * 动态注册新的处理器
      */
+    @Synchronized
     fun registerHandler(handler: JumpHandler) {
-        handlers.add(handler)
-        handlers.sortByDescending { it.getPriority() }
+        handlers = (handlers + handler).sortedByDescending { it.getPriority() }
     }
 
     /** 移除指定类型的处理器。 */
+    @Synchronized
     fun unregisterHandler(clazz: Class<out JumpHandler>) {
-        handlers.removeAll { it.javaClass == clazz }
+        handlers = handlers.filterNot { it.javaClass == clazz }
     }
 
     /** 返回当前已注册处理器快照，便于调试或单元测试。 */

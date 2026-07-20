@@ -38,6 +38,27 @@ object PackageUtil {
         }
     }
 
+    /** 获取首次安装时间戳；查询失败时返回 `0`。 */
+    fun getFirstInstallTime(context: Context, packageName: String = context.packageName): Long {
+        return getPackageInfo(context, packageName)?.firstInstallTime ?: 0L
+    }
+
+    /** 获取最后更新安装包的时间戳；查询失败时返回 `0`。 */
+    fun getLastUpdateTime(context: Context, packageName: String = context.packageName): Long {
+        return getPackageInfo(context, packageName)?.lastUpdateTime ?: 0L
+    }
+
+    /** 判断当前应用是否为 debuggable 构建。 */
+    fun isDebuggable(context: Context, packageName: String = context.packageName): Boolean {
+        val appInfo = getApplicationInfo(context, packageName) ?: return false
+        return appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+    }
+
+    /** 获取 APK 安装路径；查询失败时返回 `null`。 */
+    fun getSourceDir(context: Context, packageName: String = context.packageName): String? {
+        return getApplicationInfo(context, packageName)?.sourceDir
+    }
+
     /** 判断指定包名是否已安装且对当前应用可见。 */
     fun isInstalled(context: Context, packageName: String): Boolean {
         if (packageName.isBlank()) return false

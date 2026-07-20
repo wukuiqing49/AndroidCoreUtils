@@ -23,7 +23,9 @@ data class MediaResource(
     val size: Long,
     val mimeType: String,
     val dateAdded: Long,
-    val duration: Long = 0
+    val duration: Long = 0,
+    /** Unix timestamp in seconds, matching MediaStore.MediaColumns.DATE_MODIFIED. */
+    val dateModified: Long = 0
 )
 
 /**
@@ -336,8 +338,8 @@ class PhotoPickerHelper private constructor(
             MediaSortType.NAME_ASC -> allMedia.sortBy { it.name }
             MediaSortType.DURATION_DESC -> allMedia.sortByDescending { it.duration }
             MediaSortType.DURATION_ASC -> allMedia.sortBy { it.duration }
-            MediaSortType.MODIFIED_DESC -> allMedia.sortByDescending { it.dateAdded } // 简便处理
-            MediaSortType.MODIFIED_ASC -> allMedia.sortBy { it.dateAdded }
+            MediaSortType.MODIFIED_DESC -> allMedia.sortByDescending { it.dateModified }
+            MediaSortType.MODIFIED_ASC -> allMedia.sortBy { it.dateModified }
         }
 
         allMedia
@@ -355,7 +357,8 @@ class PhotoPickerHelper private constructor(
             MediaStore.MediaColumns.DISPLAY_NAME,
             MediaStore.MediaColumns.SIZE,
             MediaStore.MediaColumns.MIME_TYPE,
-            MediaStore.MediaColumns.DATE_ADDED
+            MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.DATE_MODIFIED
         )
         if (isVideo) projection.add(MediaStore.Video.VideoColumns.DURATION)
 
@@ -375,6 +378,7 @@ class PhotoPickerHelper private constructor(
                 val sizeIdx = cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)
                 val mimeIdx = cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE)
                 val dateIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+                val modifiedIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
                 val durationIdx = if (isVideo) cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION) else -1
 
                 while (cursor.moveToNext()) {
@@ -389,7 +393,8 @@ class PhotoPickerHelper private constructor(
                             size = if (sizeIdx != -1) cursor.getLong(sizeIdx) else 0L,
                             mimeType = if (mimeIdx != -1) cursor.getString(mimeIdx) ?: "" else "",
                             dateAdded = if (dateIdx != -1) cursor.getLong(dateIdx) else 0L,
-                            duration = if (durationIdx != -1) cursor.getLong(durationIdx) else 0L
+                            duration = if (durationIdx != -1) cursor.getLong(durationIdx) else 0L,
+                            dateModified = if (modifiedIdx != -1) cursor.getLong(modifiedIdx) else 0L
                         )
                     )
                 }

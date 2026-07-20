@@ -4,10 +4,10 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 /**
- * Optional global crash handler used by ALog.
+ * ALog 使用的可选全局崩溃处理器。
  *
- * It records the uncaught exception and then delegates to the previous handler
- * so the host app keeps its normal crash behavior.
+ * 发生未捕获异常时先同步写入日志并关闭日志文件，再交给原有处理器继续处理，
+ * 因此不会改变宿主应用原本的崩溃行为。
  */
 internal class CrashHandler : Thread.UncaughtExceptionHandler {
 

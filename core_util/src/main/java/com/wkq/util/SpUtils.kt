@@ -5,17 +5,18 @@ import android.os.Parcelable
 import com.tencent.mmkv.MMKV
 
 /**
- * MMKV local key-value storage helper.
+ * 基于 MMKV 的本地键值存储工具。
  *
- * Call [init] in Application before using this class. The default APIs use
- * MMKV.defaultMMKV(), while the id/cryptKey parameters can target named or
- * encrypted MMKV instances.
+ * 使用前必须在 Application 中调用 [init]。未指定 [id] 时使用默认 MMKV；指定
+ * [id] 与 [cryptKey] 可访问命名或加密实例。同一 [id] 必须始终使用相同的密钥，
+ * 否则无法正确读取已保存的数据。
  */
 object SpUtils {
 
     private var mmkv: MMKV? = null
     private val instances = mutableMapOf<String, MMKV>()
 
+    /** 初始化 MMKV，并创建默认存储实例。建议仅在 Application 中调用一次。 */
     @Synchronized
     fun init(context: Context) {
         MMKV.initialize(context)
@@ -26,12 +27,18 @@ object SpUtils {
     /** 是否已经完成初始化。 */
     fun isInitialized(): Boolean = mmkv != null
 
+    /** 获取默认 MMKV 实例；未调用 [init] 时会抛出异常。 */
     fun getMMKV(): MMKV {
         return mmkv ?: throw IllegalStateException(
             "SpUtils has not been initialized. Please call SpUtils.init(context) in your Application."
         )
     }
 
+    /**
+     * 获取命名 MMKV 实例。
+     *
+     * 空 [id] 会返回默认实例；非空 [cryptKey] 会创建加密实例。
+     */
     @Synchronized
     fun getMMKV(id: String, cryptKey: String? = null): MMKV {
         if (id.isBlank()) return getMMKV()
@@ -46,6 +53,7 @@ object SpUtils {
         }
     }
 
+    /** 写入基础类型、[Parcelable] 或 `Set<String>`；传入 `null` 会删除该键。 */
     fun put(key: String, value: Any?, id: String? = null, cryptKey: String? = null) {
         putTo(getTargetMMKV(id, cryptKey), key, value)
     }

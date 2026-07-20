@@ -22,7 +22,7 @@ import coil3.transform.Transformation
 import java.io.File
 
 /**
- * ImageLoaderUtil
+ * Coil 图片加载工具。
  *
  * 功能：
  * 1. 图片加载工具类，支持 URL / File / resId
@@ -35,8 +35,10 @@ import java.io.File
 object ImageLoaderUtil {
 
     /**
-     * 基础加载方法
-     * @return Disposable 可用于取消请求
+     * 基础图片加载方法。
+     *
+     * 使用前需先调用 [CacheManager.init]。返回的 [Disposable] 可在视图不再需要结果时
+     * 取消请求；[data] 为 `null` 时不会发起加载并返回 `null`。
      */
     fun load(
         imageView: ImageView,

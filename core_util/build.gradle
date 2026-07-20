@@ -6,7 +6,7 @@ plugins {
 
 ext.POM_ARTIFACT_ID = "AndroidCoreUtils"
 ext.POM_NAME = "core_util"
-ext.POM_DESCRIPTION = "Android utility library for storage, image loading, compression, jump handling, logs, screen, notification and safety helpers."
+ext.POM_DESCRIPTION = "Android utility library for storage, image loading, files, permissions, documents, network, jump handling, logs, screen, notification and safety helpers."
 
 android {
     namespace = 'com.wkq.util'
@@ -58,12 +58,11 @@ dependencies {
 
     testImplementation libs.junit
 
-    api libs.toasty
+    implementation libs.toasty
     api libs.mmkv
     api libs.coil
-    api libs.coil3.coil.gif
+    implementation libs.coil3.coil.gif
     implementation(libs.coil.network.okhttp)
-    implementation(libs.luban)
 }
 
 apply from: rootProject.file("gradle/util-publish.gradle")

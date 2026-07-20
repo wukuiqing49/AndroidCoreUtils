@@ -56,22 +56,28 @@ CoreUtils.init(
 | `UriUtil` | 读取 `Uri` 的文件名、大小、MIME，并支持复制到缓存或目标文件。 |
 | `PhoneUtil` | 品牌、型号、系统版本、AndroidId、模拟器判断、设备摘要。 |
 | `PackageUtil` | 包名、版本名、版本号、应用名、图标、安装检测、打开 App、打开设置页、签名 SHA-256。 |
+| `KeystoreUtil` | 基于 Android Keystore 的 AES-GCM 字符串加解密与密钥管理。 |
+| `KeystoreBackedStorage` | 使用 Keystore 加密后写入 MMKV 的敏感字符串存储。 |
+| `AppLifecycleMonitor` | 应用进程前后台状态与 `StateFlow` 监听。 |
+| `LocaleUtil` | 当前语言/地区、RTL 判断与 AppCompat 应用语言切换。 |
 | `NetworkUtil` | 网络是否可用、Wi-Fi/移动网络/以太网判断、网络类型、打开网络设置。 |
+| `NetworkMonitor` | 基于 Flow 的网络状态监听，支持联网验证状态和传输类型。 |
 | `KeyboardUtil` | 显示/隐藏软键盘、切换软键盘、判断键盘是否可见。 |
+| `InsetsUtil` | edge-to-edge、系统栏和 IME Insets padding。 |
 | `ClipboardUtil` | 复制文本、读取文本、清空剪贴板。 |
 | `IntentUtil` | 打开浏览器、拨号、短信、邮件、应用市场、应用设置页。 |
 | `ShareUtil` | 分享文本、单文件、多文件。 |
 | `FormatUtil` | 文件大小、小数、数字、百分比、手机号脱敏、空值兜底。 |
 | `DateUtil` | 时间格式化/解析、当天开始/结束、加天数、是否今天、日期差、友好时间。 |
-| `ConvertUtil` | `dp2px`、`px2dp`、`sp2px`、`px2sp`。 |
 | `ScreenUtil` | 屏幕宽高和基础尺寸转换。 |
 | `ViewUtil` | `visible/gone/invisible`、防重复点击。 |
 | `ValidateUtil` | 邮箱、URL、手机号、数字、身份证、空值校验。 |
 | `DigestUtil` | 字符串 MD5/SHA-1/SHA-256、Base64 编解码。 |
 | `NotificationUtil` | 通知权限检查和跳转通知设置页。 |
+| `PermissionHelper` | 基于 Activity Result API 的运行时权限请求，提供媒体和通知权限集合。 |
 | `PhotoPickerHelper` | 基于 Android Photo Picker 的图片/视频选择、拍照、录像、媒体库查询。 |
+| `DocumentPickerHelper` | 基于 Storage Access Framework 的文件选择、创建和目录授权。 |
 | `ImageLoaderUtil` | 基于 Coil 3 的图片加载、GIF、圆角、圆形、灰度、固定缓存。 |
-| `ImageCompressUtil` | 基于 Luban 的图片压缩，支持 path 和 `Uri`。 |
 | `ALog` | 控制台日志、文件日志、可选崩溃日志、日志上传入口。 |
 | `SmartJumpUtils` | 电商链接智能跳转，支持淘宝、京东、拼多多、抖音、闲鱼等 scheme。 |
 | `ThemeManager` | 明暗主题管理，基于 `AppCompatDelegate`。 |
@@ -146,6 +152,8 @@ button.setDebouncedClickListener {
 
 `PhotoPickerHelper.launch()` 使用系统 Photo Picker，不需要相册读取权限。`queryMediaList()` 是直接查询 MediaStore，属于读取媒体库，Android 13+ 需要 `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO`，Android 14+ 还要考虑部分照片访问策略。
 
+`PermissionHelper`、`PhotoPickerHelper` 和 `DocumentPickerHelper` 都必须在 Activity 或 Fragment 的 `onCreate` 阶段调用 `register()`。运行时权限仍需由宿主在 Manifest 中声明；工具库不会合并危险权限。
+
 拍照、文件分享、`FileUtil.getUriForFile()` 需要宿主配置 FileProvider。默认 authority 是：
 
 ```text
@@ -199,18 +207,16 @@ CoreUtils.init(
 
 ## 图片工具分析
 
-图片能力由 `CacheManager`、`ImageLoaderUtil`、`ImageCompressUtil` 组成：
+图片能力由 `CacheManager`、`ImageLoaderUtil` 组成：
 
 - `CacheManager` 创建统一 Coil `ImageLoader`，配置内存缓存、磁盘缓存、GIF decoder 和 OkHttp 网络加载。
 - `ImageLoaderUtil` 封装 URL/File/resId 加载，支持圆形、圆角、灰度、GIF、固定缓存。
-- `ImageCompressUtil` 用 Luban 压缩图片，支持 path 和 `Uri`。
 
 注意点：
 
 - `ImageLoaderUtil` 依赖 `CacheManager.init()`，建议通过 `CoreUtils.init(initImageLoader = true)` 初始化。
 - `CacheManager.init()` 默认不会调用 Coil `SingletonImageLoader.setSafe`，不会抢宿主 App 的 Coil 全局配置。只有 `registerSingleton = true` 或 `CoreUtilsConfig(registerCoilSingleton = true)` 时才会注册全局单例。
 - `loadPinned()` 会把 bitmap 额外写入内存和磁盘缓存，适合头像、礼物图标等高频资源，不建议对大量大图使用。
-- `ImageCompressUtil.compress(uri)` 会把 `Uri` 复制成临时文件再压缩，稳定性好，但会占用缓存空间，使用方需要按需清理。
 
 ## 本地源码引用
 

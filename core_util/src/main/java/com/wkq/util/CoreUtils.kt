@@ -1,13 +1,14 @@
 package com.wkq.util
 
 import android.content.Context
+import android.app.Application
 import com.wkq.util.coil.CacheManager
 import com.wkq.util.log.ALog
 
 /**
  * CoreUtils 初始化配置。
  *
- * 默认只初始化存储和图片加载，日志保持关闭，避免工具库发布后抢占宿主 App 行为。
+ * 默认初始化存储、图片加载和应用前后台监听；日志保持关闭，避免工具库发布后抢占宿主 App 行为。
  */
 data class CoreUtilsConfig(
     /** 是否初始化 MMKV 存储能力。 */
@@ -45,30 +46,44 @@ data class CoreUtilsConfig(
     /** Coil 磁盘缓存大小。 */
     val imageDiskCacheMB: Int = 200,
     /** 是否注册为 Coil 全局单例，默认不抢占宿主配置。 */
-    val registerCoilSingleton: Boolean = false
+    val registerCoilSingleton: Boolean = false,
+    /** 是否初始化应用前后台监听。 */
+    val initAppLifecycleMonitor: Boolean = true
 )
 
 /**
  * AndroidCoreUtils 统一初始化入口。
  */
 object CoreUtils {
+    @Volatile
     private var initialized = false
+
+    @Volatile
     private lateinit var appContext: Context
+
+    @Volatile
     private var config: CoreUtilsConfig = CoreUtilsConfig()
 
-    /** 初始化工具库。建议在 Application.onCreate 中调用。 */
+    /**
+     * 初始化工具库。建议在 Application.onCreate 中调用。
+     *
+     * 重复调用只接受与首次调用完全相同的配置，避免已初始化的子组件与公开配置不一致。
+     */
+    @Synchronized
     fun init(context: Context, config: CoreUtilsConfig = CoreUtilsConfig()) {
-        appContext = context.applicationContext
-        this.config = config
-        FileUtil.setFileProviderAuthority(
-            config.fileProviderAuthority ?: "${appContext.packageName}.fileprovider"
-        )
+        if (initialized) {
+            check(this.config == config) {
+                "CoreUtils has already been initialized with a different configuration. " +
+                    "Initialize it once in Application.onCreate()."
+            }
+            return
+        }
 
-        if (initialized) return
-        initialized = true
+        config.validate()
+        val applicationContext = context.applicationContext
 
         if (config.initStorage) {
-            SpUtils.init(appContext)
+            SpUtils.init(applicationContext)
             if (!config.storageId.isNullOrBlank()) {
                 SpUtils.getMMKV(config.storageId, config.storageCryptKey)
             }
@@ -76,7 +91,7 @@ object CoreUtils {
 
         if (config.initImageLoader) {
             CacheManager.init(
-                context = appContext,
+                context = applicationContext,
                 pinnedMemoryMB = config.pinnedMemoryMB,
                 memoryCachePercent = config.imageMemoryCachePercent,
                 pinnedDiskMB = config.pinnedDiskMB,
@@ -87,7 +102,7 @@ object CoreUtils {
 
         if (config.initLog) {
             ALog.init(
-                context = appContext,
+                context = applicationContext,
                 isShow = config.debug,
                 showStackInfo = config.showLogStackInfo,
                 enableFile = config.logToFile,
@@ -97,6 +112,16 @@ object CoreUtils {
                 captureCrash = config.logCaptureCrash
             )
         }
+
+        FileUtil.setFileProviderAuthority(
+            config.fileProviderAuthority ?: "${applicationContext.packageName}.fileprovider"
+        )
+        if (config.initAppLifecycleMonitor) {
+            (applicationContext as? Application)?.let(AppLifecycleMonitor::init)
+        }
+        appContext = applicationContext
+        this.config = config
+        initialized = true
     }
 
     fun isInitialized(): Boolean = initialized
@@ -116,4 +141,16 @@ object CoreUtils {
         return config.fileProviderAuthority
             ?: FileUtil.getFileProviderAuthority(context ?: getContext())
     }
+}
+
+internal fun CoreUtilsConfig.validate() {
+    require(logFilePrefix.isNotBlank()) { "logFilePrefix must not be blank." }
+    require(logMaxFileSize > 0L) { "logMaxFileSize must be greater than 0." }
+    require(logCacheDays >= 0) { "logCacheDays must not be negative." }
+    CacheManager.validateConfiguration(
+        pinnedMemoryMB = pinnedMemoryMB,
+        memoryCachePercent = imageMemoryCachePercent,
+        pinnedDiskMB = pinnedDiskMB,
+        diskCacheMB = imageDiskCacheMB
+    )
 }
